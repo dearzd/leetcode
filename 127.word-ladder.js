@@ -9,44 +9,45 @@ var ladderLength = function(beginWord, endWord, wordList) {
     if (!asset.has(endWord)) {
         return 0;
     }
+
     asset.delete(beginWord);
     asset.delete(endWord);
 
-    let startSet = new Set([beginWord]);
+    let beginSet = new Set([beginWord]);
     let endSet = new Set([endWord]);
     let len = 1;
 
-    while (startSet.size && endSet.size) {
-        // bfs from smaller one
-        if (startSet.size > endSet.size) {
-            let temp = startSet;
-            startSet = endSet;
+    while (beginSet.size && endSet.size) {
+        if (beginSet.size > endSet.size) {
+            let temp = beginSet;
+            beginSet = endSet;
             endSet = temp;
         }
 
-        let nextSet = new Set();
-        for (let currentWord of startSet) {
-            for (let i = 0; i < currentWord.length; i++) {
-                let before = currentWord.slice(0, i);
-                let after = currentWord.slice(i + 1, currentWord.length);
-                for (let j = 97; j <= 122; j++) {
-                    let newWord = before + String.fromCharCode(j) + after;
-                    if (newWord === currentWord) {
+        let temp = new Set();
+        for (let current of beginSet) {
+
+            for (let j = 0; j < current.length; j++) {
+                let before = current.substring(0, j);
+                let after = current.substring(j + 1, current.length);
+
+                for (let k = 97; k <= 122; k++) {
+                    let next = before + String.fromCharCode(k) + after;
+                    if (next === current) {
                         continue;
                     }
-                    if (endSet.has(newWord)) {
+                    if (endSet.has(next)) {
                         return len + 1;
                     }
-                    if (asset.has(newWord)) {
-                        nextSet.add(newWord);
-                        asset.delete(newWord);
+                    if (asset.has(next)) {
+                        temp.add(next);
+                        asset.delete(next);
                     }
                 }
             }
         }
-
-        startSet = nextSet;
-        len += 1;
+        beginSet = temp;
+        len++;
     }
 
     return 0;
@@ -163,3 +164,4 @@ console.log(ladderLength(
     ["si","go","se","cm","so","ph","mt","db","mb","sb","kr","ln","tm","le","av","sm","ar","ci","ca","br","ti","ba","to","ra","fa","yo","ow","sn","ya","cr","po","fe","ho","ma","re","or","rn","au","ur","rh","sr","tc","lt","lo","as","fr","nb","yb","if","pb","ge","th","pm","rb","sh","co","ga","li","ha","hz","no","bi","di","hi","qa","pi","os","uh","wm","an","me","mo","na","la","st","er","sc","ne","mn","mi","am","ex","pt","io","be","fm","ta","tb","ni","mr","pa","he","lr","sq","ye"]
 ), 5);
 console.log(ladderLength("hit","cog",["hot","dot","dog","lot","log"]), 0);
+console.log(ladderLength("ymain", "oecij", ["ymann","yycrj","oecij","ymcnj","yzcrj","yycij","xecij","yecij","ymanj","yzcnj","ymain"]), 10);

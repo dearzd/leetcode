@@ -3,6 +3,41 @@
  * @return {number}
  */
 var numDecodings = function(s) {
+    // dp[i] = dp[i - 2] + dp[i - 1], if s[i] !== 0 && s[i - 1] !== 0 && s[i - 1] + s[i] >= 11 and <= 26
+    // dp[i] = 0, if s[i] == 0 && (s[i - 1] == 0 or s[i - 1] > 2),
+    // dp[i] = dp[i - 1], else;
+
+    if (!s || !s.length || s[0] === '0') {
+        return 0;
+    }
+
+    // let dp = [1, 1];
+    let prev = 1;
+    let current = 1;
+    let next = 1;
+    for (let i = 1; i < s.length; i++) {
+        if (s[i] === '0' && (s[i - 1] === '0' || s[i - 1] > '2')) {
+            return 0;
+        } else if (
+            s[i] !== '0' &&
+            (i === s.length - 1 || s[i + 1] !== '0') &&
+            (s[i - 1] === '1' || (s[i - 1] === '2' && (s[i] >= '1' && s[i] <= '6')))
+        ) {
+            // dp[i + 1] = dp[i - 1] + dp[i];
+            next = prev + current;
+        } else {
+            // dp[i + 1] = dp[i];
+            next = current;
+        }
+        prev = current;
+        current = next;
+    }
+
+    // return dp[s.length];
+    return next;
+}
+
+var numDecodings_fourth = function(s) {
     // if s[i] != 0, and s[i - 1] + s[i] >= 1 <= 26, dp[i] = dp[i - 1] + dp[i - 2]
     // if s[i] !==0, else dp[i] = dp[i - 1]
     // if s[i] == 0, if s[i - 1] == 1 or == 2, dp[i] = dp[i - 1]
@@ -156,6 +191,7 @@ console.log(numDecodings('27'), 1);
 console.log(numDecodings('122'), 3);
 console.log(numDecodings('226'), 3);
 console.log(numDecodings('0'), 0);
+console.log(numDecodings('1'), 1);
 console.log(numDecodings('012'), 0);
 console.log(numDecodings('100'), 0);
 console.log(numDecodings('101'), 1);
